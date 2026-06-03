@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Coming Soon | Be First to Know",
+  title: "Careers | Join Our Team — CareerPortal",
   description:
-    "Something extraordinary is being built. Join our exclusive early-access list and be the first to know when we launch.",
+    "Explore exciting career opportunities and submit your application. We're hiring Frontend, Backend, Full Stack, DevOps, and more.",
   openGraph: {
-    title: "Coming Soon | Be First to Know",
+    title: "Careers | Join Our Team — CareerPortal",
     description:
-      "Something extraordinary is being built. Join our exclusive early-access list and be the first to know when we launch.",
+      "Explore exciting career opportunities and submit your application. We're hiring talented professionals across multiple roles.",
     type: "website",
   },
 };
