@@ -27,9 +27,9 @@ interface CareerFormData {
   email: string;
   phone: string;
   jobProfile: string;
-  experienceType: string;
   currentSalary: string;
-  experience: string;
+  indianExperience: string;
+  gulfExperience: string;
 }
 
 interface FieldErrors extends Partial<CareerFormData> {
@@ -41,9 +41,9 @@ const INITIAL_FORM: CareerFormData = {
   email: '',
   phone: '',
   jobProfile: '',
-  experienceType: '',
   currentSalary: '',
-  experience: '',
+  indianExperience: '',
+  gulfExperience: '',
 };
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -52,16 +52,39 @@ const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
 const JOB_PROFILES = [
-  'Frontend Developer',
-  'Backend Developer',
-  'Full Stack Developer',
-  'UI/UX Designer',
-  'Project Manager',
-  'DevOps Engineer',
-  'Data Scientist',
+  'INSTRUMENT FITTER',
+  'INSTRUMENT TECHNICIAN',
+  'MILL WRIGHT FITTER',
+  'PIPE FITTER',
+  'STRUCTURAL FITTER',
+  'Bus Driver',
+  'Truck Driver',
+  'Truck with Crane',
+  'Mobile Crane Operator (80, 100, 150 & 200 Ton)',
+  'Wheel Loader Operator',
+  'Sand Blaster Operator',
+  'Erector Gang Leader',
+  'Scaffolder',
+  'Painter',
+  'Labourer',
+  'GRE Laminators',
+  'Erector',
+  'FITTER-HYDROTEST',
+  'TECHNICIAN-HYDROTEST',
+  'MANAGER-E&I',
+  'INSPECTOR-QA/QC-PIPING',
+  'FITTER-INSTRUMENT',
+  'TECHNICIAN-INSTRUMENT',
+  'FITTER-PIPE (SKILLED)',
+  'INSPECTOR-QA/QC-ELECTRICAL',
+  'INSPECTOR-QA/QC-INSTRUMENTATION',
+  'MILLWRIGHT',
+  'MILLWRIGHT FOREMAN',
+  'MILLWRIGHT SUPERVISOR',
+  'MECHANICAL HELPER',
 ];
 
-const EXPERIENCE_TYPES = ['Indian Experience', 'Gulf Experience'];
+
 
 /* ─── Component ──────────────────────────────────────── */
 
@@ -88,7 +111,13 @@ export default function CareerPage() {
     else if (!PHONE_REGEX.test(form.phone.trim())) errors.phone = 'Enter a valid phone number.';
 
     if (!form.jobProfile) errors.jobProfile = 'Please select a job profile.';
-    if (!form.experienceType) errors.experienceType = 'Please select experience type.';
+
+    if (form.indianExperience && (isNaN(Number(form.indianExperience)) || Number(form.indianExperience) < 0)) {
+      errors.indianExperience = 'Must be a positive number.';
+    }
+    if (form.gulfExperience && (isNaN(Number(form.gulfExperience)) || Number(form.gulfExperience) < 0)) {
+      errors.gulfExperience = 'Must be a positive number.';
+    }
 
     if (resumeFile) {
       const ext = '.' + resumeFile.name.split('.').pop()?.toLowerCase();
@@ -202,21 +231,10 @@ export default function CareerPage() {
 
   return (
     <div className={styles.page}>
-      {/* Top decorative strip */}
-      <div className={styles.topStrip} aria-hidden="true" />
 
       <div className={styles.container}>
 
-        {/* ── Navbar ── */}
-        <nav className={styles.navbar}>
-          <div className={styles.logo}>
-            <div className={styles.logoIcon}>
-              <FiGlobe size={20} />
-            </div>
-            <span className={styles.logoText}>CareerPortal</span>
-          </div>
-          <span className={styles.navBadge}>Now Hiring</span>
-        </nav>
+
 
         {/* ── Hero ── */}
         <header className={styles.hero}>
@@ -225,15 +243,13 @@ export default function CareerPage() {
             Open Positions Available
           </div>
           <h1 className={styles.heroHeading}>
-            Build Your Career<br />
-            <span className={styles.heroAccent}>With Us</span>
+            TRIBRIDGE CAREER
+            <span className={styles.heroAccent}>OPPORTUNITIES</span>
           </h1>
           <p className={styles.heroSubtext}>
-            Join a passionate team building the next generation of digital products.
-            We value talent, growth, and ambition — apply today and let&apos;s grow together.
+            If you are seeking the right platform to showcase your talent, accelerate your learning, and grow professionally, then TriBridge is the perfect place for you. We are always looking for passionate individuals who are ready to make a difference. Join us and be part of a dynamic team that thrives on innovation, collaboration, and excellence. Discover your potential with TriBridge today!
           </p>
 
-          {/* Stats row */}
           <div className={styles.statsRow}>
             {[
               { value: '50+', label: 'Open Roles' },
@@ -399,35 +415,69 @@ export default function CareerPage() {
                   </div>
                 </div>
 
-                {/* ── Row 3: Experience Type + Current Salary ── */}
+                {/* ── Row 3: Indian Experience + Gulf Experience ── */}
                 <div className={styles.row}>
                   <div className={styles.fieldGroup}>
-                    <label htmlFor="experienceType" className={styles.label}>
-                      <FiGlobe className={styles.labelIcon} />
-                      Experience Type <span className={styles.required}>*</span>
+                    <label htmlFor="indianExperience" className={styles.label}>
+                      <FiClock className={styles.labelIcon} />
+                      Indian Experience
                     </label>
-                    <select
-                      id="experienceType"
-                      name="experienceType"
-                      value={form.experienceType}
-                      onChange={handleChange}
-                      className={`${styles.input} ${styles.select} ${fieldErrors.experienceType ? styles.inputError : ''}`}
-                      disabled={formState === 'loading'}
-                      aria-required="true"
-                      aria-describedby={fieldErrors.experienceType ? 'expType-error' : undefined}
-                    >
-                      <option value="">Select type…</option>
-                      {EXPERIENCE_TYPES.map(t => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
-                    {fieldErrors.experienceType && (
-                      <span id="expType-error" className={styles.fieldError} role="alert">
-                        {fieldErrors.experienceType}
+                    <div className={styles.inputWithSuffix}>
+                      <input
+                        id="indianExperience"
+                        name="indianExperience"
+                        type="number"
+                        min="0"
+                        max="50"
+                        step="0.5"
+                        placeholder="e.g. 3"
+                        value={form.indianExperience}
+                        onChange={handleChange}
+                        className={`${styles.input} ${styles.inputSuffixed} ${fieldErrors.indianExperience ? styles.inputError : ''}`}
+                        disabled={formState === 'loading'}
+                        aria-describedby={fieldErrors.indianExperience ? 'indianExperience-error' : undefined}
+                      />
+                      <span className={styles.inputSuffix}>years</span>
+                    </div>
+                    {fieldErrors.indianExperience && (
+                      <span id="indianExperience-error" className={styles.fieldError} role="alert">
+                        {fieldErrors.indianExperience}
                       </span>
                     )}
                   </div>
 
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="gulfExperience" className={styles.label}>
+                      <FiGlobe className={styles.labelIcon} />
+                      Gulf Experience
+                    </label>
+                    <div className={styles.inputWithSuffix}>
+                      <input
+                        id="gulfExperience"
+                        name="gulfExperience"
+                        type="number"
+                        min="0"
+                        max="50"
+                        step="0.5"
+                        placeholder="e.g. 2"
+                        value={form.gulfExperience}
+                        onChange={handleChange}
+                        className={`${styles.input} ${styles.inputSuffixed} ${fieldErrors.gulfExperience ? styles.inputError : ''}`}
+                        disabled={formState === 'loading'}
+                        aria-describedby={fieldErrors.gulfExperience ? 'gulfExperience-error' : undefined}
+                      />
+                      <span className={styles.inputSuffix}>years</span>
+                    </div>
+                    {fieldErrors.gulfExperience && (
+                      <span id="gulfExperience-error" className={styles.fieldError} role="alert">
+                        {fieldErrors.gulfExperience}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* ── Row 4: Current Salary ── */}
+                <div className={styles.rowHalf}>
                   <div className={styles.fieldGroup}>
                     <label htmlFor="currentSalary" className={styles.label}>
                       <FiDollarSign className={styles.labelIcon} />
@@ -444,32 +494,6 @@ export default function CareerPage() {
                       className={styles.input}
                       disabled={formState === 'loading'}
                     />
-                  </div>
-                </div>
-
-                {/* ── Row 4: Experience (years) ── */}
-                <div className={styles.rowHalf}>
-                  <div className={styles.fieldGroup}>
-                    <label htmlFor="experience" className={styles.label}>
-                      <FiClock className={styles.labelIcon} />
-                      Total Experience
-                    </label>
-                    <div className={styles.inputWithSuffix}>
-                      <input
-                        id="experience"
-                        name="experience"
-                        type="number"
-                        min="0"
-                        max="50"
-                        step="0.5"
-                        placeholder="e.g. 3"
-                        value={form.experience}
-                        onChange={handleChange}
-                        className={`${styles.input} ${styles.inputSuffixed}`}
-                        disabled={formState === 'loading'}
-                      />
-                      <span className={styles.inputSuffix}>years</span>
-                    </div>
                   </div>
                 </div>
 
@@ -572,10 +596,7 @@ export default function CareerPage() {
           </div>
         </main>
 
-        {/* ── Footer ── */}
-        <footer className={styles.footer}>
-          <p>© {new Date().getFullYear()} CareerPortal. All rights reserved.</p>
-        </footer>
+
 
       </div>
     </div>

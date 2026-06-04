@@ -62,3 +62,8 @@ img, svg {
   display: block;
   max-width: 100%;
 }
+
+/* Hide Next.js Dev Indicator portal in development */
+nextjs-portal {
+  display: none !important;
+}

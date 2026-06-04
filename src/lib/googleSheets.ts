@@ -39,7 +39,7 @@ export const appendRowToSheet = async (values: string[]): Promise<boolean> => {
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: 'Sheet1!A1',
+      range: 'Sheet1!A2',
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [values],

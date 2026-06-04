@@ -29,15 +29,15 @@ export async function POST(req: Request) {
     const email = (formData.get('email') as string | null)?.trim().toLowerCase() ?? '';
     const phone = (formData.get('phone') as string | null)?.trim() ?? '';
     const jobProfile = (formData.get('jobProfile') as string | null)?.trim() ?? '';
-    const experienceType = (formData.get('experienceType') as string | null)?.trim() ?? '';
     const currentSalary = (formData.get('currentSalary') as string | null)?.trim() ?? '';
-    const experience = (formData.get('experience') as string | null)?.trim() ?? '';
+    const indianExperience = (formData.get('indianExperience') as string | null)?.trim() ?? '';
+    const gulfExperience = (formData.get('gulfExperience') as string | null)?.trim() ?? '';
     const resumeFile = formData.get('resume') as File | null;
 
     // --- Required field validation ---
-    if (!fullName || !email || !phone || !jobProfile || !experienceType) {
+    if (!fullName || !email || !phone || !jobProfile) {
       return NextResponse.json(
-        { error: 'Full name, email, phone, job profile, and experience type are required.' },
+        { error: 'Full name, email, phone, and job profile are required.' },
         { status: 400 }
       );
     }
@@ -55,8 +55,10 @@ export async function POST(req: Request) {
       );
     }
 
-    // --- Resume validation ---
-    let resumePath: string | null = null;
+    // --- Resume validation & Base64 Conversion ---
+    let resumeName: string | null = null;
+    let resumeMime: string | null = null;
+    let resumeBase64: string | null = null;
     if (resumeFile && resumeFile.size > 0) {
       if (resumeFile.size > MAX_FILE_SIZE) {
         return NextResponse.json({ error: 'Resume file must be 5MB or smaller.' }, { status: 400 });
@@ -70,17 +72,10 @@ export async function POST(req: Request) {
         );
       }
 
-      // Save file to uploads/resumes/
-      const uploadsDir = path.join(process.cwd(), 'uploads', 'resumes');
-      await mkdir(uploadsDir, { recursive: true });
-
-      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-      const filename = `resume-${uniqueSuffix}${ext}`;
-      const filePath = path.join(uploadsDir, filename);
-
       const bytes = await resumeFile.arrayBuffer();
-      await writeFile(filePath, Buffer.from(bytes));
-      resumePath = `/uploads/resumes/${filename}`;
+      resumeBase64 = Buffer.from(bytes).toString('base64');
+      resumeName = resumeFile.name;
+      resumeMime = resumeFile.type;
     }
 
     // --- Duplicate email check ---
@@ -102,24 +97,33 @@ export async function POST(req: Request) {
         email,
         phone,
         jobProfile,
-        experienceType,
         currentSalary: currentSalary ? parseFloat(currentSalary) : null,
-        experience: experience ? parseFloat(experience) : null,
-        resumePath,
-      },
+        indianExperience: indianExperience ? parseFloat(indianExperience) : null,
+        gulfExperience: gulfExperience ? parseFloat(gulfExperience) : null,
+        resumeName,
+        resumeMime,
+        resumeBase64,
+      } as any,
     });
+
+    // Format date as YYYY-MM-DD
+    const formattedDate = new Date().toISOString().split('T')[0];
+
+    // Prepend site URL to form public resume download link
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const resumePublicUrl = resumeBase64 ? `${siteUrl}/api/resume?id=${application.id}` : '';
 
     // --- Sync to Google Sheets (decoupled — failure does not block 201) ---
     const sheetsSynced = await appendRowToSheet([
-      new Date().toISOString(),
+      formattedDate,
       fullName,
       email,
       phone,
       jobProfile,
-      experienceType,
+      indianExperience || '',
+      gulfExperience || '',
       currentSalary || '',
-      experience || '',
-      resumePath || '',
+      resumePublicUrl,
     ]).catch(() => false);
 
     if (!sheetsSynced) {

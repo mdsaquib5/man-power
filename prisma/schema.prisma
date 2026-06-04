@@ -18,14 +18,16 @@ model Lead {
 }
 
 model Application {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  fullName       String
-  email          String   @unique
-  phone          String
-  jobProfile     String
-  experienceType String
-  currentSalary  Float?
-  experience     Float?
-  resumePath     String?
-  createdAt      DateTime @default(now())
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  fullName         String
+  email            String   @unique
+  phone            String
+  jobProfile       String
+  currentSalary    Float?
+  indianExperience Float?
+  gulfExperience   Float?
+  resumeName       String?
+  resumeMime       String?
+  resumeBase64     String?
+  createdAt        DateTime @default(now())
 }
